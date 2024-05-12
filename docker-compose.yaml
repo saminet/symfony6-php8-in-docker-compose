@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 services:
     php8-sf6:
         container_name: php8-sf6
@@ -12,16 +12,29 @@ services:
         image: schickling/mailcatcher
         ports: [1025, 1080]
 
-    database:
-        image: postgres:13-alpine
-        environment:
-            POSTGRES_DB: app
-            POSTGRES_PASSWORD: ChangeMe
-            POSTGRES_USER: symfony
-        volumes:
-            - db-data:/var/lib/postgresql/data:rw
+    db:
+        image: postgres
+        container_name: local_pgdb
+        restart: always
         ports:
-            - "5432"
+          - "5432:5432"
+        environment:
+          POSTGRES_USER: user-name
+          POSTGRES_PASSWORD: strong-password
+        volumes:
+          - local_pgdata:/var/lib/postgresql/data
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadmin4_container
+        restart: always
+        ports:
+          - "8888:80"
+        environment:
+          PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+          PGADMIN_DEFAULT_PASSWORD: strong-password
+        volumes:
+          - pgadmin-data:/var/lib/pgadmin
 
 volumes:
-  db-data:
+  local_pgdata:
+  pgadmin-data:
